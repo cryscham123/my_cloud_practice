@@ -18,32 +18,6 @@ resource "aws_key_pair" "my_labtop" {
     public_key = file("~/.ssh/id_rsa.pub")
 }
 
-resource "aws_security_group" "loki" {
-    name        = "loki_sg"
-    description = "security group for loki server"
-
-    ingress {
-        from_port   = 22
-        to_port     = 22
-        protocol    = "tcp"
-        cidr_blocks = ["0.0.0.0/0"]
-    }
-
-    ingress {
-        from_port   = 3100
-        to_port     = 3100
-        protocol    = "tcp"
-        cidr_blocks = ["0.0.0.0/0"]
-    }
-
-    egress {
-        from_port   = 0
-        to_port     = 0
-        protocol    = "-1"
-        cidr_blocks = ["0.0.0.0/0"]
-    }
-}
-
 resource "aws_security_group" "app_server" {
     name        = "app_sg"
     description = "security group for app server"
@@ -56,10 +30,10 @@ resource "aws_security_group" "app_server" {
     }
 
     ingress {
-        from_port   = 9100
-        to_port     = 9100
+        from_port   = 2379
+        to_port     = 2379
         protocol    = "tcp"
-        security_groups = [aws_security_group.loki.id]
+        cidr_blocks = ["0.0.0.0/0"]
     }
 
     egress {
@@ -67,18 +41,6 @@ resource "aws_security_group" "app_server" {
         to_port     = 0
         protocol    = "-1"
         cidr_blocks = ["0.0.0.0/0"]
-    }
-}
-
-resource "aws_instance" "loki" {
-    ami           = "ami-0572f73f0a5650b33"
-    instance_type = "t2.micro"
-
-    vpc_security_group_ids = [aws_security_group.loki.id]
-
-    key_name = aws_key_pair.my_labtop.key_name
-    tags = {
-        Name = "LokiServer"
     }
 }
 
@@ -92,11 +54,6 @@ resource "aws_instance" "app_server" {
     tags = {
         Name = "AppServer"
     }
-}
-
-output "loki_public_ip" {
-  description = "The public IP of the instance"
-  value       = aws_instance.loki.public_ip
 }
 
 output "app_server_public_ip" {

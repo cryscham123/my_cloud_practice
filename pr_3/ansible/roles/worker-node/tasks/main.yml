@@ -1,0 +1,69 @@
+---
+- name: Download app
+  get_url:
+    url: https://v1-29.docs.kubernetes.io/docs/setup/production-environment/tools/kubeadm/install-kubeadm/
+    dest: /tmp/kubeadm.tar.gz
+
+- name: Extract app
+  unarchive:
+    src: /tmp/kubeadm.tar.gz
+    dest: /opt
+    remote_src: yes
+    creates: /opt/kubeadm
+
+# - name: create group
+#   group:
+#     name: prometheus
+#     system: yes
+  
+# - name: create user
+#   user:
+#     name: prometheus
+#     group: prometheus
+#     system: yes
+#     shell: /sbin/nologin
+
+# - name: make folders
+#   file:
+#     path: "{{ item }}"
+#     state: directory
+#     owner: prometheus
+#     group: prometheus
+#     mode: 0775
+#   loop:
+#     - /var/lib/node
+
+- name: Move file
+  command: mv "/opt/etcd-v3.4.32-linux-amd64/{{ item }}" /usr/local/sbin/
+  loop:
+    - etcd
+    - etcdctl
+
+# - name: Create Node Exporter service
+#   copy:
+#     content: |
+#       [Unit]
+#       Description=Prometheus Node Exporter
+#       Documentation=https://prometheus.io/docs/introduction/overview/
+#       Wants=network-online.target
+#       After=network-online.target
+
+#       [Service]
+#       Type=simple
+#       User=prometheus
+#       Group=prometheus
+#       ExecReload=/bin/kill -HUP $MAINPID
+#       ExecStart=/var/lib/node/node_exporter
+
+#       SyslogIdentifier=prometheus_node_exporter
+#       Restart=always
+
+#       [Install]
+#       WantedBy=multi-user.target
+#     dest: /etc/systemd/system/node.service
+
+# - name: Start Node Exporter service
+#   systemd:
+#     name: node
+#     state: started
+#     enabled: yes
