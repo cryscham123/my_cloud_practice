@@ -1,10 +1,9 @@
-terraform {
-  backend "remote" {
-    hostname     = "app.terraform.io"
-    organization = "example"
+# terraform {
+#   cloud {
+#     organization = "hyunghki"
 
-    workspaces {
-      name = "example"
-    }
-  }
-}
+#     workspaces {
+#       name = "demo-2tier"
+#     }
+#   }
+# }
