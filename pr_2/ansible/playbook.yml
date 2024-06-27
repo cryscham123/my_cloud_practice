@@ -1,9 +1,0 @@
----
-- hosts: ec2-43-201-103-66.ap-northeast-2.compute.amazonaws.com
-  vars:
-    ansible_user: ubuntu
-  become: yes
-  tasks:
-    - name: Run playbook
-      include_role:
-        name: node-exporter
