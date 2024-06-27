@@ -1,0 +1,13 @@
+#!myansible/bin/ansible-playbook
+
+- hosts: _MasterServer
+  become: 'yes'
+  remote_user: 'ubuntu'
+  tasks:
+    - name: 'Test'
+      shell: cat /etc/os-release
+      register: os_name
+    - set_fact:
+        os_name: "{{ os_name.stdout_lines[0].split('=')[1].replace('\"', '') }}"
+    - debug:
+        var: os_name
