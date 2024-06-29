@@ -1,0 +1,25 @@
+#!myansible/bin/ansible-playbook
+
+- hosts: _MasterServer
+  tasks:
+    - block:
+      - name: 'Update apt cache'
+        apt:
+          update_cache: True
+
+      - name: 'nginx install'
+        apt:
+          name: 'nginx'
+          state: 'present'
+
+      - name: 'start nginx'
+        service:
+          name: 'nginx'
+          state: 'started'
+      become: True
+
+    - name: 'Test'
+      shell: cat /etc/os-release
+      register: os_name
+    - debug:
+        var: os_name

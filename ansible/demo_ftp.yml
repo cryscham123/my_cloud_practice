@@ -1,0 +1,44 @@
+#!myansible/bin/ansible-playbook
+
+- hosts: _MasterServer
+  become: True
+  vars:
+    anonymous_enable: True
+    local_enable: True
+    write_enable: True
+    anon_upload_enable: True
+  tasks:
+    - block:
+      - name: 'Update apt cache'
+        apt:
+          update_cache: True
+
+      - name: 'install vsftpd'
+        apt:
+          name: 'vsftpd'
+          state: 'present'
+
+      - name: 'backup config'
+        copy:
+          src: /etc/vsftpd.conf
+          dest: /etc/vsftpd.conf.bak
+          remote_src: True
+
+      - name: 'update config'
+        template:
+          src: vsftpd.conf.j2
+          dest: /etc/vsftpd.conf
+        notify: restart vsftpd
+
+      rescue:
+        - name: 'restore config'
+          copy:
+            src: /etc/vsftpd.conf.bak
+            dest: /etc/vsftpd.conf
+            remote_src: True
+
+  handlers:
+    - name: restart vsftpd
+      service:
+        name: vsftpd
+        state: restarted

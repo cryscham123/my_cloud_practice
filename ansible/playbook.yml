@@ -1,13 +1,8 @@
 #!myansible/bin/ansible-playbook
 
-- hosts: _MasterServer
-  become: 'yes'
-  remote_user: 'ubuntu'
+- hosts: "ENV_{{ ENVIRONMENT }}"
+  become: True
+  gather_facts: False
   tasks:
-    - name: 'Test'
-      shell: cat /etc/os-release
-      register: os_name
-    - set_fact:
-        os_name: "{{ os_name.stdout_lines[0].split('=')[1].replace('\"', '') }}"
     - debug:
-        var: os_name
+        msg: "Hello, World!"
